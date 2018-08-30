@@ -5,9 +5,11 @@ import App from './App.vue'
 import router from './router/index'
 import HeaderTop from './components/HeaderTop/HeaderTop.vue'
 import store from './store/index'
+import {Button} from 'mint-ui'
 // Vue.config.productionTip = false
 
 Vue.component('HeaderTop',HeaderTop)
+Vue.component(Button.name,Button); //mt-button诞生
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
