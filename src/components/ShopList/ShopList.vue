@@ -6,7 +6,7 @@
     </div>
     <div class="footsfooter">
       <ul>
-        <li v-for="(p,index) in shops" :key="index">
+        <li v-for="(p,index) in shops" :key="index" @click="$router.push('/shop')">
           <div class="mainimg">
             <img :src=imgBaseUrl+p.image_path>
           </div>

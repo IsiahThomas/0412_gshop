@@ -18,3 +18,10 @@ export const reqPhoneMsg = (phone,code)=>ajax(`/api/login_sms`,{phone,code},'POS
 export const reqUsersInfo = ()=>ajax(`/api/userinfo`);
 //用户登出
 export const reqLogout = ()=>ajax(`/api/logout`);
+
+//请求商家详情，因为是mock的数据，所以不需要代理api
+export const reqShopInfo = ()=>ajax('/info');
+//请求商品列表
+export const reqShopGoods = ()=>ajax('/goods');
+//请求商家评价
+export const reqShopRatings = ()=>ajax('/ratings');

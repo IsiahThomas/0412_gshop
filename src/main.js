@@ -6,6 +6,8 @@ import router from './router/index'
 import HeaderTop from './components/HeaderTop/HeaderTop.vue'
 import store from './store/index'
 import {Button} from 'mint-ui'
+
+import './mock/mockServer'
 // Vue.config.productionTip = false
 
 Vue.component('HeaderTop',HeaderTop)

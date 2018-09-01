@@ -30,7 +30,7 @@
                 <input type="tel" maxlength="11" placeholder="手机/邮箱/用户名" v-model="name">
               </section>
               <section class="login_verification">
-                <input type="tel" maxlength="8" placeholder="密码" v-model="pwd">
+                <input :type="isShowpwd?'password':'text'" maxlength="8" placeholder="密码" v-model="pwd">
                 <div class="switch_button" :class="isShowpwd?'on':'off'" @click="isShowpwd=!isShowpwd">
                   <div class="switch_circle" :class="{right:isShowpwd}"></div>
                   <span class="switch_text">...</span>

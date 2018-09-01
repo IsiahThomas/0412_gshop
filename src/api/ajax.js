@@ -16,9 +16,11 @@ export default function ajax(url,data={},type='GET') {
     })
     if(paramStr){
       paramStr = paramStr.substring(0,paramStr.length-1);
-    }
       promise = axios.get(url+'?'+paramStr);
-  }else{
+    }else if(!paramStr){
+      promise = axios.get(url);
+    }
+  }else if(type==='POST'){
       promise = axios.post(url,data);
     }
     promise.then(response=> resolve(response.data))

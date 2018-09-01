@@ -1,8 +1,9 @@
 /*
 vuex的actions模块
  */
-import {reqAddress, reqCategory, reqShopStore,reqShopList,reqUsersInfo,reqLogout} from '../api'
-import {RECEIVE_ADDRESS, RECEIVE_CATEGORYS, RECEIVE_SHOPS,RECEIVE_SHOPLIST,SET_USER,RESET_USER} from './mutation-types'
+import {reqAddress, reqCategory, reqShopStore,reqShopList,reqUsersInfo,reqLogout,reqShopGoods,reqShopInfo,reqShopRatings} from '../api'
+import {RECEIVE_ADDRESS, RECEIVE_CATEGORYS, RECEIVE_SHOPS,
+  RECEIVE_SHOPLIST,SET_USER,RESET_USER,RECEIVE_GOODS,RECEIVE_INFO,RECEIVE_RATINGS} from './mutation-types'
 
 export default {
   // 异步获取地址
@@ -40,10 +41,36 @@ export default {
       commit(SET_USER, {user: result.data});
     }
   },
+  //退出登录
   async getLogout({commit}){
     const result = await reqLogout();
     if(result.code === 0){
       commit(RESET_USER)
     }
+  },
+  //获取商家的商品信息
+  async getShopGoods({commit},callback){  //如果你需要在获取数据之后执行回调函数，那么你可以给它加一个形参，然后判断如果有回调那就执行。
+    const result = await reqShopGoods();
+    if(result.code === 0){
+      commit(RECEIVE_GOODS,{goods:result.data});
+      if(callback){
+        callback()
+      };
+    }
+  },
+  //获取商家评价
+  async getShopRatings({commit}){
+    const result = await reqShopRatings();
+    if(result.code === 0){
+      commit(RECEIVE_RATINGS,{ratings:result.data});
+    }
+  },
+  //获取商家详情信息（这些是头部的信息）
+  async getShopInfo({commit}){
+    const result = await reqShopInfo();
+    if(result.code === 0){
+      commit(RECEIVE_INFO,{info:result.data});
+    }
   }
+
 }
