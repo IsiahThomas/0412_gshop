@@ -5,7 +5,7 @@
         <ul ref="menuUl">
           <!--current-->
           <li class="menu-item" v-for="(good, index) in goods" :key="index"
-               @click="clickItem(index)">
+             :class="{current: currentIndex === index}" @click="handleClick(index)">
             <span class="text bottom-border-1px">
               <img class="icon" :src="good.icon" v-if="good.icon">
               {{good.name}}
@@ -14,8 +14,8 @@
         </ul>
       </div>
       <div class="foods-wrapper">
-        <ul ref="foodsUl">
-          <li class="food-list-hook" v-for="(good, index) in goods" :key="index">
+        <ul ref="goodsUl">
+          <li class="food-list-hook" v-for="(good, index) in goods" :key="index" >
             <h1 class="title">{{good.name}}</h1>
             <ul>
               <li class="food-item bottom-border-1px" v-for="(food, index) in good.foods"
@@ -34,37 +34,103 @@
                     <span class="old" v-if="food.oldPrice">￥{{food.oldPrice}}</span>
                   </div>
                   <div class="cartcontrol-wrapper">
+                    <CartControl :food="food"/>
                   </div>
                 </div>
               </li>
             </ul>
           </li>
+
         </ul>
       </div>
     </div>
+    <Food :food="food" ref="food"/>
+    <ShopCart/>
   </div>
 </template>
 <script>
   import {mapState} from 'vuex'
   import Bscroll from 'better-scroll'
+  import CartControl from '../../../components/CartControl/CartControl.vue'
+  import Food from '../../../components/Food/Food.vue'
+  import ShopCart from '../../../pages/Shop/ShopCart/ShopCart.vue'
   export default {
     data() {
-      return {}
+      return {
+        scrollY:0,
+        tops:[],
+        food:{}  //这个东西是点击谁就显示谁，所以开始没点击之前是没有值得，所以定义为空数组为好
+      }
+    },components:{
+      CartControl,
+      Food,
+      ShopCart
     },
     computed: {
-      ...mapState(['goods'])
+      ...mapState(['goods']),
+      currentIndex(){//这个计算属性是根据scrollY和tops值共同确定的，就是判断左侧列表当前显示哪个标签的这么一个量
+        console.log(this.tops,Array.isArray(this.tops) );  //this.tops instanceof Array
+        let {scrollY,tops} = this;
+        const index = tops.findIndex((top,index)=>//当数组中的元素在测试条件时返回 true 时, findIndex() 返回符合条件的元素的索引位置，之后的值不会再调用执行函数。
+          scrollY >= top && scrollY < tops[index+1] //当前这个scrollY介于当前top和下一个top之间，此时获取这个index.
+        //如果语句只有一句千万不要加花括号，如果你加了那么一定要加 return。
+        )
+        return index;
+      }
     },
     methods: {
-     _initScroll(){
+     /*_initScroll(){
        new Bscroll('.menu-wrapper',{
          click:true
        });
        new Bscroll('.foods-wrapper')
-     }
+     },*/
+      //初始化右侧列表的tops值。
+     _initTops(){
+        const tops = [];
+        let top = 0;
+        tops.push(top);
+        let lis = this.$refs.goodsUl.getElementsByClassName('food-list-hook');
+        Array.from(lis).forEach((li,index)=>{
+          top+=li.clientHeight;
+          tops.push(top);
+        })
+        this.tops = tops
+      },
+      handleClick(index){
+       //你在调用这个方法的时候，就可以在那个标签内获取那个标签内的属性，
+        // 所以你在这里需要传一个形参。这是一种思想
+        const scrollY = this.tops[index];
+        //实时更新所定义的scrollY
+        this.scrollY = scrollY;
+        //这是better-scroll的方法，可以让右侧列表滚动到对应的部分。
+        this.foodScroll.scrollTo(0,-scrollY,300);
+      },
+      showFood(food){
+        this.food = food;
+        this.$refs.food.toggleShow();
+      }
     },
     mounted(){
       this.$store.dispatch('getShopGoods',()=>{
-        this._initScroll();
+        this.$nextTick(()=>{
+          this._initTops();
+          new Bscroll('.menu-wrapper',{
+            click:true
+          });
+          this.foodScroll = new Bscroll('.foods-wrapper',{
+            click:true,  //因为它并没有完全禁用原生的事件，所以最好设置为true能让它不会出现问题。
+            probeType:3 //惯性滑动,就是在new这个后面加一个配置对象。
+          })
+          //给右侧列表绑定点击监听，实时收集scrollY.
+          this.foodScroll.on('scroll',({x,y})=>{
+            this.scrollY = Math.abs(y);
+          });
+          this.foodScroll.on('scrollEnd',({x,y})=>{
+            this.scrollY = Math.abs(y);
+          })
+        })
+
       });
     }
 
@@ -95,7 +161,7 @@
           z-index: 10
           margin-top: -1px
           background: #fff
-          color: $green
+          color: #3da4ff
           font-weight: 700
           .text
             border-none()

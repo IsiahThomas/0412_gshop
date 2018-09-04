@@ -7,9 +7,12 @@ import {
   RESET_USER,
   RECEIVE_GOODS,
   RECEIVE_RATINGS,
-  RECEIVE_INFO
+  RECEIVE_INFO,
+  ADD_GOODSCOUNT,
+  EDD_GOODSCOUNT
 } from './mutation-types'
 
+import Vue from 'vue'
 export default {
   [RECEIVE_ADDRESS](state, {address}) {
     state.address = address
@@ -38,4 +41,18 @@ export default {
   [RECEIVE_INFO](state,{info}){
     state.info = info;
   },
+
+  [ADD_GOODSCOUNT](state,{food}){
+    if(food.count){
+      food.count++;
+    }else if(!food.count){
+      Vue.set(food,'count',1);// 新增属性必须要通过set来设置数据绑定。
+      state.cartFoods.push(food);
+    }
+  },
+  [EDD_GOODSCOUNT](state,{food}){
+    if(food.count) {
+      food.count--;
+    }
+  }
 }

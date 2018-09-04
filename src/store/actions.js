@@ -3,7 +3,8 @@ vuex的actions模块
  */
 import {reqAddress, reqCategory, reqShopStore,reqShopList,reqUsersInfo,reqLogout,reqShopGoods,reqShopInfo,reqShopRatings} from '../api'
 import {RECEIVE_ADDRESS, RECEIVE_CATEGORYS, RECEIVE_SHOPS,
-  RECEIVE_SHOPLIST,SET_USER,RESET_USER,RECEIVE_GOODS,RECEIVE_INFO,RECEIVE_RATINGS} from './mutation-types'
+  RECEIVE_SHOPLIST,SET_USER,RESET_USER,
+  RECEIVE_GOODS,RECEIVE_INFO,RECEIVE_RATINGS,ADD_GOODSCOUNT,EDD_GOODSCOUNT} from './mutation-types'
 
 export default {
   // 异步获取地址
@@ -59,11 +60,12 @@ export default {
     }
   },
   //获取商家评价
-  async getShopRatings({commit}){
+  async getShopRatings({commit},callback){
     const result = await reqShopRatings();
     if(result.code === 0){
       commit(RECEIVE_RATINGS,{ratings:result.data});
     }
+    callback&&callback();
   },
   //获取商家详情信息（这些是头部的信息）
   async getShopInfo({commit}){
@@ -71,6 +73,14 @@ export default {
     if(result.code === 0){
       commit(RECEIVE_INFO,{info:result.data});
     }
-  }
+  },
 
+  //同步更新商品数量
+  updateFoodCount({commit},{bool,food}){
+    if(bool){
+      commit(ADD_GOODSCOUNT,{food});
+    }else{
+      commit(EDD_GOODSCOUNT,{food});
+    }
+  }
 }

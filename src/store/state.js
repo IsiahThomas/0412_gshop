@@ -8,5 +8,6 @@ export default {
   user:[], //用户信息
   goods:[],//商品信息
   ratings:[],//评价信息
-  info:{}//商家详情
+  info:{},//商家详情
+  cartFoods:[] //购物车数组(这个数组里的东西是totalCount)
 }
